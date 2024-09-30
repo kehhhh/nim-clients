@@ -21,7 +21,7 @@ Please refer to the [Python documentation](https://www.python.org/downloads/) fo
 git clone https://github.com/nvidia-maxine/nim-clients.git
 
 // Go to the 'eye-contact' folder
-cd eye-contact
+cd nim-clients/eye-contact
 ```
 
 ### 2. Install dependencies
@@ -49,7 +49,7 @@ TODO: update the docs link
 - Usage
 
 ```bash
-    python eye-contact.py --target <localhost:port> --input <input file path> --output <output file path and the file name>
+    python eye-contact.py --target <server_ip:port> --input <input file path> --output <output file path and the file name>
  ```
 
 - Example command to process the packaged sample video
