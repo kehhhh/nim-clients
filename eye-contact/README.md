@@ -34,9 +34,7 @@ pip install -r requirements.txt
 ### 3. Host the NIM Server
 
 Before running client part of Maxine Eye Contact, please set up a server.
-The simplest way to do that is to follow the [quick start guide](https://nim-tme.gitlab-master-pages.nvidia.com/-/documentation/-/jobs/110488926/artifacts/_build/docs/maxine/eye-contact/latest/index.html)
-
-TODO: update the docs link
+The simplest way to do that is to follow the [quick start guide](https://docs.nvidia.com/nim/maxine/eye-contact/latest/index.html)
 
 ### 4. Run the Python Client
 
@@ -69,4 +67,4 @@ TODO: update the docs link
 - `--input`- input file to apply effect, default value is `../assets/sample_input.mp4`
 - `--output`- output file name and path, default is current directory (scripts) with name output.mp4
 
-Refer the [docs](https://nim-tme.gitlab-master-pages.nvidia.com/-/documentation/-/jobs/110488926/artifacts/_build/docs/maxine/eye-contact/latest/index.html) for more information
+Refer the [docs](https://docs.nvidia.com/nim/maxine/eye-contact/latest/index.html) for more information
