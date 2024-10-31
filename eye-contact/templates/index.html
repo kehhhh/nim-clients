@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EyeContact AI - Perfect Eye Contact Enhancement</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <style>
+        :root {
+            --background: 240 10% 3.9%;
+            --foreground: 0 0% 98%;
+            --card: 240 10% 3.9%;
+            --card-foreground: 0 0% 98%;
+            --popover: 240 10% 3.9%;
+            --popover-foreground: 0 0% 98%;
+            --primary: 0 0% 98%;
+            --primary-foreground: 240 5.9% 10%;
+            --secondary: 240 3.7% 15.9%;
+            --secondary-foreground: 0 0% 98%;
+            --muted: 240 3.7% 15.9%;
+            --muted-foreground: 240 5% 64.9%;
+            --accent: 240 3.7% 15.9%;
+            --accent-foreground: 0 0% 98%;
+            --destructive: 0 62.8% 30.6%;
+            --destructive-foreground: 0 0% 98%;
+            --border: 240 3.7% 15.9%;
+            --input: 240 3.7% 15.9%;
+            --ring: 240 4.9% 83.9%;
+            --radius: 0.75rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: hsl(var(--background));
+            color: hsl(var(--foreground));
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            background: linear-gradient(to right, #fff, #666);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .header p {
+            color: hsl(var(--muted-foreground));
+            font-size: 1.25rem;
+        }
+
+        .upload-container {
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: var(--radius);
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .drop-zone {
+            border: 2px dashed hsl(var(--border));
+            border-radius: calc(var(--radius) - 2px);
+            padding: 3rem 2rem;
+            text-align: center;
+            transition: all 0.15s ease;
+            cursor: pointer;
+        }
+
+        .drop-zone:hover {
+            background: hsl(var(--secondary));
+            border-color: hsl(var(--primary));
+        }
+
+        .video-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .video-box {
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .video-box h3 {
+            padding: 1rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: hsl(var(--foreground));
+        }
+
+        .video-box video {
+            width: 100%;
+            display: block;
+            background-color: hsl(var(--secondary));
+        }
+
+        .download-btn {
+            display: inline-block;
+            background: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+            padding: 0.5rem 1rem;
+            margin: 1rem;
+            border-radius: var(--radius);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: opacity 0.15s ease;
+        }
+
+        .download-btn:hover {
+            opacity: 0.8;
+        }
+
+        .error {
+            color: hsl(var(--destructive));
+            margin: 1rem 0;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .video-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2.5rem;
+            }
+        }
+
+        /* Add other styles from ui.html as needed */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>EyeContact AI</h1>
+            <p>Transform your videos with perfect eye contact using NVIDIA AI</p>
+        </header>
+
+        <div class="upload-container">
+            <div class="drop-zone" id="dropZone">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="17 8 12 3 7 8"/>
+                    <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                <h3>Drag & Drop your video here</h3>
+                <p>or click to select a file</p>
+                <input type="file" id="fileInput" accept="video/*" style="display: none">
+            </div>
+        </div>
+
+        <div class="processing-status" id="processingStatus" style="display: none;">
+            <h4>Processing Status</h4>
+            <div class="progress-bar">
+                <div class="progress" id="processingProgress"></div>
+            </div>
+            <div class="processing-steps">
+                <div class="step" id="uploadStep">
+                    <div class="spinner"></div>
+                    <span class="step-text">Uploading video...</span>
+                </div>
+                <div class="step" id="processStep">
+                    <span class="step-icon">⭕</span>
+                    <span class="step-text">Processing video (2-3 minutes)...</span>
+                </div>
+                <div class="step" id="completeStep">
+                    <span class="step-icon">⭕</span>
+                    <span class="step-text">Finalizing...</span>
+                </div>
+            </div>
+            <p class="processing-warning">Please keep this tab open while processing</p>
+        </div>
+
+        <div class="error" id="error"></div>
+        
+        <div class="video-container" id="videoContainer" style="display: none;">
+            <div class="video-box">
+                <h3>Original Video</h3>
+                <video id="originalVideo" controls></video>
+                <a href="#" class="download-btn" id="downloadOriginal">Download Original</a>
+            </div>
+            <div class="video-box">
+                <h3>Processed Video</h3>
+                <video id="processedVideo" controls></video>
+                <a href="#" class="download-btn" id="downloadProcessed">Download Processed</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const dropZone = document.getElementById('dropZone');
+            const fileInput = document.getElementById('fileInput');
+            const videoContainer = document.getElementById('videoContainer');
+            const originalVideo = document.getElementById('originalVideo');
+            const processedVideo = document.getElementById('processedVideo');
+            const downloadOriginal = document.getElementById('downloadOriginal');
+            const downloadProcessed = document.getElementById('downloadProcessed');
+            const error = document.getElementById('error');
+
+            // Handle file selection
+            fileInput.addEventListener('change', handleFileSelect);
+            
+            // Handle drag and drop
+            dropZone.addEventListener('click', () => fileInput.click());
+            
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.style.background = 'hsl(var(--secondary))';
+            });
+            
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.style.background = '';
+            });
+            
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.style.background = '';
+                const files = e.dataTransfer.files;
+                handleFileSelect({ target: { files } });
+            });
+
+            async function handleFileSelect(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                // Validate file type and size
+                if (!file.type.startsWith('video/')) {
+                    showError('Please upload a video file');
+                    return;
+                }
+
+                if (file.size > 100 * 1024 * 1024) { // 100MB limit
+                    showError('File size must be less than 100MB');
+                    return;
+                }
+
+                const processingStatus = document.getElementById('processingStatus');
+                const uploadStep = document.getElementById('uploadStep');
+                const processStep = document.getElementById('processStep');
+                const completeStep = document.getElementById('completeStep');
+                const processingProgress = document.getElementById('processingProgress');
+
+                try {
+                    error.textContent = '';
+                    processingStatus.style.display = 'block';
+                    
+                    // Start upload
+                    uploadStep.classList.add('active');
+                    processingProgress.style.width = '33%';
+
+                    const formData = new FormData();
+                    formData.append('video', file);
+
+                    const response = await fetch('/', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(await response.text());
+                    }
+
+                    // Upload complete, start processing
+                    uploadStep.querySelector('.spinner').outerHTML = '✅';
+                    processStep.classList.add('active');
+                    processStep.querySelector('.step-icon').outerHTML = '<div class="spinner"></div>';
+                    processingProgress.style.width = '66%';
+
+                    Toastify({
+                        text: "Video uploaded! Processing will take 2-3 minutes...",
+                        duration: 5000,
+                        className: "toast-notification",
+                        gravity: "bottom",
+                        position: "right",
+                        stopOnFocus: true,
+                    }).showToast();
+
+                    const data = await response.blob();
+                    
+                    // Processing complete
+                    processStep.querySelector('.spinner').outerHTML = '✅';
+                    completeStep.classList.add('active');
+                    completeStep.querySelector('.step-icon').outerHTML = '<div class="spinner"></div>';
+                    processingProgress.style.width = '100%';
+
+                    // Show the video container
+                    videoContainer.style.display = 'grid';
+
+                    // Set up original video
+                    const originalUrl = URL.createObjectURL(file);
+                    originalVideo.src = originalUrl;
+                    downloadOriginal.href = originalUrl;
+                    downloadOriginal.download = file.name;
+
+                    // Set up processed video
+                    const processedUrl = URL.createObjectURL(data);
+                    processedVideo.src = processedUrl;
+                    downloadProcessed.href = processedUrl;
+                    downloadProcessed.download = 'processed_' + file.name;
+
+                    // Complete
+                    completeStep.querySelector('.spinner').outerHTML = '✅';
+
+                    Toastify({
+                        text: "Video processing completed! 🎉",
+                        duration: 3000,
+                        className: "toast-notification",
+                        gravity: "bottom",
+                        position: "right",
+                        stopOnFocus: true,
+                    }).showToast();
+
+                    setTimeout(() => {
+                        processingStatus.style.display = 'none';
+                    }, 3000);
+
+                } catch (err) {
+                    showError(err.message);
+                    processingStatus.style.display = 'none';
+                    
+                    Toastify({
+                        text: "Error processing video: " + err.message,
+                        duration: 3000,
+                        className: "toast-notification",
+                        style: { background: "hsl(var(--destructive))" },
+                        gravity: "bottom",
+                        position: "right",
+                        stopOnFocus: true,
+                    }).showToast();
+                }
+            }
+
+            function showError(message) {
+                error.textContent = message;
+                videoContainer.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html> 
